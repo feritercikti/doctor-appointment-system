@@ -1,10 +1,24 @@
 import { Button, Col, Form, Input, Row, TimePicker } from 'antd';
+import moment from 'moment';
 import React from 'react';
 
-const DoctorForm = () => {
+const DoctorForm = ({ onFinish, initialValues }) => {
   return (
     <div className='flex items-center  mx-6'>
-      <Form layout='vertical' className='text-center'>
+      <Form
+        layout='vertical'
+        className='text-center'
+        onFinish={onFinish}
+        initialValues={{
+          ...initialValues,
+          ...(initialValues && {
+            timings: [
+              moment(initialValues?.timings[0], 'HH:mm'),
+              moment(initialValues?.timings[1], 'HH:mm'),
+            ],
+          }),
+        }}
+      >
         <h1 className='my-3 '>Personal information</h1>
         <Row gutter={[16, 16]}>
           <Col span={6} xs={20} sm={12} lg={6}>
@@ -90,8 +104,8 @@ const DoctorForm = () => {
           <Col span={6} xs={20} sm={12} lg={6}>
             <Form.Item
               required
-              label='Session Time Interval'
-              name='timeInterval'
+              label='Timings'
+              name='timings'
               rules={[{ required: true }]}
             >
               <TimePicker.RangePicker format='HH:mm' />

@@ -1,14 +1,16 @@
 import { Badge } from 'antd';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { setUser } from '../redux/userSlice';
 
 const Layout = ({ children }) => {
   const [closedSide, setClosedSide] = useState(false);
-  const { user } = useSelector((state) => state.user);
 
-  const location = useLocation();
+  const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
 
   const userMenu = [
     {
@@ -72,21 +74,28 @@ const Layout = ({ children }) => {
     : user?.isDoctor
     ? doctorMenu
     : userMenu;
+
   const role = user?.isAdmin ? 'Admin' : user?.isDoctor ? 'Doctor' : 'User';
 
   return (
     <div className='p-5 '>
       <div className='flex'>
-        <div className='bg-gray-200 rounded shadow-xl mr-5 min-h-full p-[10px] py-[20px] '>
-          <div className=' flex justify-center pt-4 gap-6'>
-            <h2 className='mr-2'>{role} Panel</h2>
+        <div
+          className={
+            closedSide
+              ? ''
+              : 'bg-gray-200 rounded shadow-xl mr-5 min-h-full p-[10px] py-[20px]'
+          }
+        >
+          <div className=' flex justify-center pt-4 gap-6 px-2'>
+            {role && <h2 className='mr-2'>{role} Panel</h2>}
             <i className='ri-menu-line text-l cursor-pointer'></i>
           </div>
           <div className='mt-24 px-3 '>
             {displayedMenu.map((menu) => {
               const isActive = location.pathname === menu.path;
               return (
-                <div>
+                <>
                   <Link to={menu.path}>
                     <div
                       className={`flex mt-1 cursor-pointer hover:bg-blue-300 pt-2 pb-2 rounded pl-2 ${
@@ -97,32 +106,39 @@ const Layout = ({ children }) => {
                       {!closedSide && <div className='px-2'>{menu.name}</div>}
                     </div>
                   </Link>
-                </div>
+                </>
               );
             })}
-            <Link to='/login'>
-              <div
-                className={`flex mt-16 cursor-pointer hover:bg-blue-300 pt-2 pb-2 rounded pl-2`}
-              >
-                <i className='ri-logout-box-r-line'></i>
-                {!closedSide && <div className='px-2 '>Logout</div>}
-              </div>
-            </Link>
+
+            <div
+              className={`flex mt-16 cursor-pointer hover:bg-blue-300 pt-2 pb-2 rounded pl-2`}
+              onClick={() => {
+                localStorage.clear();
+                dispatch(setUser(null));
+                navigate('/login');
+              }}
+            >
+              <i className='ri-logout-box-r-line'></i>
+              {!closedSide && <div className='px-2 '>Logout</div>}
+            </div>
           </div>
         </div>
         <div className='w-9/12 h-full mx-auto'>
           <div className='rounded bg-gray-200 shadow-md mb-5 flex h-20 items-center justify-end'>
             <div className='flex items-center px-4'>
-              <Badge>
+              <Badge
+                count={user?.unseenNotifications.length}
+                onClick={() => navigate('/notifications')}
+              >
                 <i className='ri-notification-2-line text-xl cursor-pointer'></i>
               </Badge>
 
               <Link className='anchor mx-2 text-xl' to='/profile'>
-                User
+                {user?.name}
               </Link>
             </div>
           </div>
-          <div className='white rounded shadow-md w-full h-[82vh] overflow-x-scroll	'>
+          <div className='white rounded shadow-md h-[82vh] overflow-x-scroll	'>
             {children}
           </div>
         </div>

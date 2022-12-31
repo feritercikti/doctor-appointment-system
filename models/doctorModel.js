@@ -38,7 +38,7 @@ const doctorSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    timeInterval: {
+    timings: {
       type: Array,
       required: true,
     },
@@ -51,4 +51,5 @@ const doctorSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
 export default mongoose.model('doctors', doctorSchema);
