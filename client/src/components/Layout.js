@@ -62,11 +62,6 @@ const Layout = ({ children }) => {
       path: '/admin/doctorslist',
       icon: 'ri-user-2-line',
     },
-    {
-      name: 'Profile',
-      path: '/profile',
-      icon: 'ri-user-line',
-    },
   ];
 
   const displayedMenu = user?.isAdmin
@@ -83,45 +78,57 @@ const Layout = ({ children }) => {
         <div
           className={
             closedSide
-              ? ''
+              ? 'p-[10px] py-[36px]'
               : 'bg-gray-200 rounded shadow-xl mr-5 min-h-full p-[10px] py-[20px]'
           }
         >
-          <div className=' flex justify-center pt-4 gap-6 px-2'>
-            {role && <h2 className='mr-2'>{role} Panel</h2>}
-            <i className='ri-menu-line text-l cursor-pointer'></i>
-          </div>
-          <div className='mt-24 px-3 '>
-            {displayedMenu.map((menu) => {
-              const isActive = location.pathname === menu.path;
-              return (
-                <>
-                  <Link to={menu.path}>
-                    <div
-                      className={`flex mt-1 cursor-pointer hover:bg-blue-300 pt-2 pb-2 rounded pl-2 ${
-                        isActive && 'bg-blue-300  '
-                      }`}
-                    >
-                      <i className={menu.icon}></i>
-                      {!closedSide && <div className='px-2'>{menu.name}</div>}
-                    </div>
-                  </Link>
-                </>
-              );
-            })}
+          {closedSide ? (
+            <i
+              className='ri-menu-line text-l cursor-pointer  p-1 shadow-md'
+              onClick={() => setClosedSide(!closedSide)}
+            ></i>
+          ) : (
+            <>
+              <div className='flex justify-center pt-4 px-2 gap-2'>
+                <i
+                  className='ri-menu-line text-l cursor-pointer'
+                  onClick={() => setClosedSide(!closedSide)}
+                ></i>
+                {role && <h2 className='mr-2'>{role} Panel</h2>}
+              </div>
+              <div className='mt-24 px-3 '>
+                {displayedMenu.map((menu) => {
+                  const isActive = location.pathname === menu.path;
+                  return (
+                    <>
+                      <Link to={menu.path}>
+                        <div
+                          className={`flex mt-1 cursor-pointer hover:bg-blue-300 pt-2 pb-2 rounded pl-2 ${
+                            isActive && 'bg-blue-300 '
+                          }`}
+                        >
+                          <i className={menu.icon}></i>
+                          <div className='px-2'>{menu.name}</div>
+                        </div>
+                      </Link>
+                    </>
+                  );
+                })}
 
-            <div
-              className={`flex mt-16 cursor-pointer hover:bg-blue-300 pt-2 pb-2 rounded pl-2`}
-              onClick={() => {
-                localStorage.clear();
-                dispatch(setUser(null));
-                navigate('/login');
-              }}
-            >
-              <i className='ri-logout-box-r-line'></i>
-              {!closedSide && <div className='px-2 '>Logout</div>}
-            </div>
-          </div>
+                <div
+                  className={`flex mt-16 cursor-pointer hover:bg-blue-300 pt-2 pb-2 rounded pl-2`}
+                  onClick={() => {
+                    localStorage.clear();
+                    dispatch(setUser(null));
+                    navigate('/login');
+                  }}
+                >
+                  <i className='ri-logout-box-r-line'></i>
+                  <div className='px-2 '>Logout</div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
         <div className='w-9/12 h-full mx-auto'>
           <div className='rounded bg-gray-200 shadow-md mb-5 flex h-20 items-center justify-end'>
