@@ -71,7 +71,8 @@ const DoctorsList = () => {
     {
       title: 'Created At',
       dataIndex: 'createdAt',
-      render: (record, text) => moment(record.createdAt).format('DD-MM-YYYY'),
+      key: 'createdAt',
+      render: (text) => <div>{moment(text).format('DD-MM-YYYY')}</div>,
     },
     {
       title: 'status',
